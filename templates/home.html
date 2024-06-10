@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>语音生成器</title>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+
+    textarea,
+    select,
+    button {
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 8px;
+      font-size: 16px;
+    }
+
+    textarea {
+      width: calc(100% - 20px);
+      /* 文本输入框比其他元素宽20px */
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #audio_player {
+      width: 100%;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>语音生成器</h1>
+
+    <div>
+      <label for="text_input">输入文本:</label>
+      <textarea id="text_input" rows="8"></textarea>
+    </div>
+
+    <div>
+      <label for="voice_select">选择音色:</label>
+      <select id="voice_select">
+        <option value="zh-CN-XiaoxiaoNeural">晓晓</option>
+        <option value="zh-CN-XiaoyiNeural">晓衣</option>
+        <option value="zh-CN-YunjianNeural">云间</option>
+        <option value="zh-CN-YunxiNeural">云溪</option>
+        <option value="zh-CN-YunxiaNeural">云晓</option>
+        <option value="zh-CN-YunyangNeural">云扬</option>
+        <!-- 可以添加更多音色选项 -->
+      </select>
+    </div>
+
+    <div>
+      <button id="generate_button">生成</button>
+    </div>
+
+    <audio id="audio_player" controls></audio>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      var audioPlayer = document.getElementById("audio_player");
+
+      $("#generate_button").click(function () {
+        var text = $("#text_input").val();
+        var voice = $("#voice_select").val();
+
+        // 发送生成音频的请求，并设置音频播放链接
+        $.ajax({
+          url: "generate",
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({ content: text, voice: voice }),
+          success: function (data, status) {
+            if (status == "success") {
+              // 设置音频链接
+              audioPlayer.src = data.audio_url;
+              audioPlayer.play();
+            } else {
+              alert("生成音频失败，请稍后重试。");
+            }
+          }
+        });
+      });
+    });
+  </script>
+
+</body>
+
+</html>

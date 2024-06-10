@@ -1,0 +1,10 @@
+# ignore virtual environment
+venv
+
+# ignore idea files
+.idea
+*.iml
+
+# ignore python cache files
+*.pyc
+**/__pycache__

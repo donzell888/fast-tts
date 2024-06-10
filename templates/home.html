@@ -93,6 +93,7 @@
 
   <script>
     $(document).ready(function () {
+	  var currentPath = location.href; // 获取当前页面路径
       var audioPlayer = document.getElementById("audio_player");
 
       $("#generate_button").click(function () {
@@ -101,14 +102,14 @@
 
         // 发送生成音频的请求，并设置音频播放链接
         $.ajax({
-          url: "generate",
+          url: currentPath + "/generate",
           type: 'POST',
           contentType: 'application/json',
           data: JSON.stringify({ content: text, voice: voice }),
           success: function (data, status) {
             if (status == "success") {
               // 设置音频链接
-              audioPlayer.src = data.audio_url;
+              audioPlayer.src = currentPath+data.audio_url;
               audioPlayer.play();
             } else {
               alert("生成音频失败，请稍后重试。");

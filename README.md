@@ -19,7 +19,7 @@ Fast-TTS 是一个基于异步框架的文本到语音转换（TTS）生成器�
 1. 克隆仓库：
     ```bash
     git clone https://github.com/donzell888/fast-tts
-    cd TTS-Generator
+    cd fast-tts
     ```
 
 2. 安装依赖：

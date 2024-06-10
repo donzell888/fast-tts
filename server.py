@@ -26,7 +26,7 @@ async def tts():
     json_obj = json.loads(plaintext)
     content = json_obj["content"]
     voice = json_obj.get("voice", "zh-CN-XiaoxiaoNeural")
-    headers = {'Transfer-Encoding': 'chunked', 'Content-Type': 'audio/webm'}
+    headers = {'Transfer-Encoding': 'chunked', 'Content-Type': 'audio/mpeg'}
     response_content = ms_tts_async(content, voice)
     return Response(response_content, headers=headers)
 

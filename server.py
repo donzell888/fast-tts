@@ -1,7 +1,12 @@
 import binascii
+import uuid
+
 from quart import Quart, request, jsonify, Response, render_template
 import json
 import edge_tts
+from aiocache import SimpleMemoryCache
+
+cache = SimpleMemoryCache()
 
 app = Quart(__name__)
 
@@ -15,13 +20,21 @@ async def home():
 async def generate():
     data = await request.get_data()
     payload = binascii.hexlify(data).decode('utf8')
-    t = {"code": 1, "audio_url": "/tts?payload=" + payload}
+    audio_id = str(uuid.uuid4())
+    await cache.set(audio_id, payload, ttl=600)  # 设置缓存有效期 10 分钟
+    t = {"code": 1, "audio_url": f"/tts?audio_id={audio_id}"}
     return jsonify(t)
 
 
 @app.route('/tts', methods=['GET'])
 async def tts():
-    payload = request.args.get("payload")
+    audio_id = request.args.get("audio_id")
+    if not audio_id:
+        return jsonify({"code": -1, "message": "Missing audio_id"}), 400
+        # 从缓存中获取 payload
+    payload = await cache.get(audio_id)
+    if not payload:
+        return jsonify({"code": -1, "message": "Audio ID expired or invalid"}), 404
     plaintext = binascii.unhexlify(payload).decode('utf8')
     json_obj = json.loads(plaintext)
     content = json_obj["content"]
